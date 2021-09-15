@@ -1,6 +1,6 @@
 # nz.co.fuzion.autofillrelatedcontacts
 
-This extension allows user to auto-fill the profile fields by selecting a contact in the autocomplete field.
+This extension allows user to auto-fill the profile fields by selecting a related contact(to which user has a permission to view/edit) in the autocomplete field.
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
@@ -38,6 +38,7 @@ cv en autofillrelatedcontacts
 - This ext creates an Individual custom group(Related Contact Lookup) and a custom field(Related Contact) on installation.
 - Include this custom field in a profile, eg Name and Address.
 - Enable this profile on an additional participant page.
-- When a participant registers on the event, this profile will load the autocomplete field.
-- User can select related contacts in this autocomplete field. On selection, all fields on the prfoile will be automatically
-filled with the contact values. Similar to what civi offers on cid=0 page.
+- When participant is registered on the event, the profile with autocomplete field is loaded on the additional participant page.
+- User can now select permissioned related contacts in this autocomplete field. On selection, all fields on the profile will be automatically filled with the contact values. Similar to what civi offers on cid=0 page.
+- This custom autocomplete field does not load any contact when the registration is done by an anonymous user.
+- Can be used in conjunction with [related permission extension](https://github.com/eileenmcnaughton/nz.co.fuzion.relatedpermissions) which allows second degree relationship to also load in the autocomplete field.
