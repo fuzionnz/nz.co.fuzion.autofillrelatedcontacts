@@ -166,6 +166,20 @@ function autofillrelatedcontacts_civicrm_apiWrappers(&$wrappers, $apiRequest) {
   }
 }
 
+function autofillrelatedcontacts_civicrm_preProcess($formName, &$form) {
+  if ($formName == 'CRM_Event_Form_Registration_AdditionalParticipant') {
+    $contactLookupField = 'custom_' . CRM_Autofillrelatedcontacts_BAO_RelatedContact::getRelatedContactCustomFieldID();
+    $params = $form->getVar('_params');
+    $filledCids = [];
+    foreach ($params as $p) {
+      if (!empty($p[$contactLookupField])) {
+        $filledCids[] = $p[$contactLookupField];
+      }
+    }
+    $form->assign('exclude_cids', json_encode($filledCids));
+  }
+}
+
 /**
  * Implements hook_civicrm_buildForm().
  *
@@ -191,7 +205,7 @@ function autofillrelatedcontacts_civicrm_buildForm($formName, &$form) {
       $autoCompleteField = [
         'id_field' => $contactLookupField,
       ];
-      CRM_Core_Resources::singleton()->addScriptFile('civicrm', 'js/AlternateContactSelector.js', 1, 'html-header')
+      CRM_Core_Resources::singleton()->addScriptFile('nz.co.fuzion.autofillrelatedcontacts', 'js/RelatedContactSelector.js', 1, 'html-header')
         ->addSetting([
           'form' => ['autocompletes' => $autoCompleteField],
           'ids' => ['profile' => $profiles],

@@ -4,7 +4,11 @@ class CRM_Autofillrelatedcontacts_APIWrapper implements API_Wrapper {
 
   public function fromApiInput($apiRequest) {
     $customFieldID = CRM_Autofillrelatedcontacts_BAO_RelatedContact::getRelatedContactCustomFieldID();
-    if (!empty($_GET['context']) && !empty($_GET['id']) && $_GET['context'] == 'customfield' && $_GET['id'] == $customFieldID) {
+    $context = CRM_Utils_Request::retrieve('context', 'String');
+    $id = CRM_Utils_Request::retrieve('id', 'Positive');
+    $excludeCids = CRM_Utils_Request::retrieve('exclude_cids', 'String');
+
+    if (!empty($context) && !empty($id) && $context == 'customfield' && $id == $customFieldID) {
       $relationships = civicrm_api3('Relationship', 'get', [
         'sequential' => 1,
         'return' => ["contact_id_a"],
@@ -23,12 +27,17 @@ class CRM_Autofillrelatedcontacts_APIWrapper implements API_Wrapper {
         }
         $relatedContacts += $secondDegreeContacts;
       }
+      $removeCids = [];
+      if (!empty($excludeCids)) {
+        $removeCids = json_decode($excludeCids, TRUE);
+      }
       if (!empty($relatedContacts)) {
-        $apiRequest['params']['id'] = ['IN' => $relatedContacts];
+        $apiRequest['params']['id'] = ['IN' => array_diff($relatedContacts, $removeCids)];
       }
       else {
         $apiRequest['params']['id'] = ['IS NULL' => 1];
       }
+
     }
     return $apiRequest;
   }
